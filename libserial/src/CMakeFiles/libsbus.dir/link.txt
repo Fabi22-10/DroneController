@@ -1,0 +1,2 @@
+/usr/bin/ar qc liblibsbus.a CMakeFiles/libsbus.dir/tty/sbus_tty_linux.c.o CMakeFiles/libsbus.dir/tty/sbus_low_latency_linux.c.o CMakeFiles/libsbus.dir/tty/sbus_low_latency_none.c.o CMakeFiles/libsbus.dir/decoder/DecoderFSM.cpp.o CMakeFiles/libsbus.dir/decoder/packet_decoder.c.o CMakeFiles/libsbus.dir/driver/SBUS.cpp.o
+/usr/bin/ranlib liblibsbus.a
