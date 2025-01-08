@@ -1,0 +1,5 @@
+/home/drone/drone/raspberry-sbus/examples/build/CMakeFiles/send_to_self.dir
+/home/drone/drone/raspberry-sbus/examples/build/CMakeFiles/blocking_receiver.dir
+/home/drone/drone/raspberry-sbus/examples/build/CMakeFiles/passthrough.dir
+/home/drone/drone/raspberry-sbus/examples/build/CMakeFiles/edit_cache.dir
+/home/drone/drone/raspberry-sbus/examples/build/CMakeFiles/rebuild_cache.dir

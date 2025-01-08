@@ -1,0 +1,1 @@
+/usr/bin/c++ -rdynamic CMakeFiles/send_to_self.dir/send_to_self.o -o send_to_self  -llibsbus 
