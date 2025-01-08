@@ -65,6 +65,12 @@ void Connector::serverLoop() {
             continue;
         }
         std::cout << "Client connected" << std::endl;
+        struct timeval timeout;
+        timeout.tv_sec = 10; // Timeout for client inactivity (10 seconds)
+        timeout.tv_usec = 0;
+
+        // Set socket options for read timeout
+        setsockopt(new_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
 
         while(true) {
             char buffer[1024] = {0};
