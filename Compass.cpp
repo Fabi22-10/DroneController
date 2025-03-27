@@ -32,6 +32,7 @@ bool Compass::init() {
     // Start the update thread
     running = true;
     compass_thread = std::thread(&Compass::update_data, this);
+    std::cout << "Compass initialized" << std::endl;
     return true;
 }
 

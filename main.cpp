@@ -114,8 +114,22 @@ int main() {
     if (err != SBUS_OK)
     {
         cerr << "SBUS install error: " << err << endl;
-        return err;
+        cerr << "SKIPPING SBUS. FOR DEVELOPMENT ONLY!" << endl;
+        // return err;
+
+        /******************************************************************/
+        // todo: remove!
+        /*****************************************************************/
+        static auto lastPrint = steady_clock::now();
+        auto now = steady_clock::now();
+        control_loop.abort();
+        lastSBUSchange = now;
+        remoteInactive = true;
+        /******************************************************************/
+        // end remove!
+        /*****************************************************************/
     }
+
     std::cerr << "Gestartet" << std::endl;
    
     lastSBUSchange = steady_clock::now();
@@ -152,7 +166,7 @@ int main() {
         } else if (result == SBUS_ERR_DESYNC) {
             printf("SBUS Read error: SBUS_ERR_DESYNC (Bad packet)\n");
         } else {
-            printf("SBUS Read error: %d\n", result);
+            // printf("SBUS Read error: %d\n", result);
         }
 
         if (!remoteInactive) {

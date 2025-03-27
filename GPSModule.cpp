@@ -8,7 +8,7 @@
 #include <thread>
 
 // Constants
-#define SERIAL_PORT "/dev/serial0"
+#define SERIAL_PORT "/dev/ttyAMA0"  // "/dev/serial0"
 #define BAUD_RATE B115200
 #define LINE_BUFFER_SIZE 256
 
@@ -74,8 +74,13 @@ void GPS::gps_reader() {
                 std::string sentence(line_buffer);
                 if (validate_checksum(sentence)) {
                     std::lock_guard<std::mutex> lock(gps_mutex);
-                    gps_queue.push(sentence);
-                    if (gps_queue.size() > 10) gps_queue.pop(); // Limit queue size
+                    if (sentence.find("$GNRMC") != std::string::npos || sentence.find("$GNGGA") != std::string::npos) {
+                        gps_queue.push(sentence);
+                        if (gps_queue.size() > 10) gps_queue.pop(); // Limit queue size
+                    }
+                }
+                else {
+                    std::cout << "Failed to validate checksum for: " << sentence << std::endl;
                 }
                 line_pos = 0; // Reset for the next line
             } else if (line_pos < LINE_BUFFER_SIZE - 1) {
@@ -118,6 +123,9 @@ void GPS::process_gps_data(const std::string &sentence) {
             speed = atof(speed_buf);    // Speed over ground (knots)
             course = atof(cog_buf);    // Course over ground (degrees)
 
+            // std::cout << "Updated GNRMC data - Time: " << time << ", Lat: " << latitude << ", Lon: " << longitude
+            //           << ", Speed: " << speed << ", Course: " << course << std::endl;
+
         } else if (sentence.find("$GNGGA") != std::string::npos) {
             char time_buf[11], lat_buf[11], lon_buf[12], alt_buf[8], geoid_buf[8];
             char ns = 0, ew = 0;
@@ -159,6 +167,10 @@ void GPS::process_gps_data(const std::string &sentence) {
             altitude_agl = parsed_altitude - parsed_geoid; // Altitude above ground level
             fix_quality = fix_quality_local;
             satellites = satellites_local;
+
+            // std::cout << "Updated GNGGA data - Time: " << time << ", Lat: " << latitude << ", Lon: " << longitude
+            //           << ", Altitude: " << altitude_agl << ", Satellites: " << satellites << std::endl;
+
         }
 
     } catch (const std::exception &e) {
@@ -196,7 +208,7 @@ float GPS::convert_to_decimal_degrees(const char *coord, char direction) {
 }
 
 bool GPS::init() {
-    gps_fd = open(SERIAL_PORT, O_RDWR | O_NOCTTY | O_NDELAY);
+    gps_fd = open(SERIAL_PORT, O_RDWR | O_NOCTTY);
     if (gps_fd == -1) {
         perror("Unable to open serial port for GPS");
         return false;
@@ -207,6 +219,7 @@ bool GPS::init() {
         return false;
     }
     gps_thread = std::thread(&GPS::gps_reader, this);
+    std::cout << "GPS initialized" << std::endl;
     return true;
 }
 
